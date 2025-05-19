@@ -1,0 +1,18 @@
+[project]
+name = "mountain-pass"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "FrasinyukGleb",email = "glebfrasinyuk@yandex.ru"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[uvicorn] (>=0.115.12,<0.116.0)",
+    "pydantic-settings (>=2.9.1,<3.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
