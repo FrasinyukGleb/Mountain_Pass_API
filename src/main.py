@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 
 import logging.config
 import logging.handlers
@@ -8,6 +8,8 @@ from contextlib import asynccontextmanager
 from typing import AsyncContextManager
 
 from core.logger import LOGGING_CONFIG
+from src.api import api_router
+from src.core.config import uvicorn_options
 
 
 @asynccontextmanager
@@ -33,11 +35,16 @@ app = FastAPI(
     docs_url="/api/openapi"
 )
 
+logger = logging.getLogger("my_app")
 
-@app.get("/")
-async def root():
-   return {"message": "Hello World"}
+router = APIRouter()
+
+app.include_router(router)
+app.include_router(api_router)
 
 
 if __name__ == '__main__':
-   uvicorn.run('main:app')
+    uvicorn.run(
+        'main:app',
+        **uvicorn_options
+    )
