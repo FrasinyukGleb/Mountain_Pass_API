@@ -14,16 +14,6 @@ class StatusEnum(enum.Enum):
     rejected = 'rejected'
 
 
-class Level(Base):
-    __tablename__ = 'Level'
-    id = Column(Integer, autoincrement=True, primary_key=True, index=True)
-    winter = Column(String(length=2), default='')
-    summer = Column(String(length=2), default='')
-    autumn = Column(String(length=2), default='')
-    spring = Column(String(length=2), default='')
-    pass_added = relationship('PassAdded', back_populates='levels')
-
-
 class User(Base):
     __tablename__ = 'User'
     id = Column(Integer, autoincrement=True, primary_key=True, index=True)
@@ -44,6 +34,25 @@ class Coord(Base):
     pass_added = relationship('PassAdded', back_populates='coords')
 
 
+class Level(Base):
+    __tablename__ = 'Level'
+    id = Column(Integer, autoincrement=True, primary_key=True, index=True)
+    winter = Column(String(length=2), default='')
+    summer = Column(String(length=2), default='')
+    autumn = Column(String(length=2), default='')
+    spring = Column(String(length=2), default='')
+    pass_added = relationship('PassAdded', back_populates='levels')
+
+
+class Image(Base):
+    __tablename__ = 'Image'
+    id = Column(Integer, autoincrement=True, primary_key=True, index=True)
+    title = Column(String(150), nullable=False)
+    data = Column(LargeBinary, nullable=False)
+    pass_id = Column(Integer, ForeignKey('Mountain_Pass.id'), nullable=False)
+    pass_added = relationship('PassAdded', back_populates='images')
+
+
 class PassAdded(Base):
     __tablename__ = 'Mountain_Pass'
     id = Column(Integer, autoincrement=True, primary_key=True, index=True)
@@ -62,10 +71,3 @@ class PassAdded(Base):
     images = relationship('Image', back_populates='pass_added')
 
 
-class Image(Base):
-    __tablename__ = 'Image'
-    id = Column(Integer, autoincrement=True, primary_key=True, index=True)
-    title = Column(String(150), nullable=False)
-    data = Column(LargeBinary, nullable=False)
-    pass_id = Column(Integer, ForeignKey('Mountain_Pass.id'), nullable=False)
-    pass_added = relationship('PassAdded', back_populates='images')

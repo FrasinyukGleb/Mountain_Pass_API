@@ -1,9 +1,8 @@
 import logging
 from datetime import datetime
-from typing import List, Optional, Union
+from typing import List, Optional
 
-from fastapi.encoders import jsonable_encoder
-from sqlalchemy import delete, select, update
+from sqlalchemy import select
 
 from src.db.db import db_dependency
 from src.models import Coord, Image, Level, PassAdded, User
@@ -74,4 +73,8 @@ class Mountain_Pass:
         session.add(levels_db)
         await session.commit()
         return levels_db.id
+
+    async def get_user_by_email(self, email: str, session: db_dependency) -> Optional[User]:
+        user = await session.execute(select(User).filter(User.email == email))
+        return user.scalar_one_or_none()
 

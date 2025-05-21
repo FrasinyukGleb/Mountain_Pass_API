@@ -3,10 +3,9 @@ from typing import Optional
 
 from dotenv import load_dotenv, find_dotenv
 import os
-from pydantic import model_validator, PostgresDsn
+from pydantic import PostgresDsn
 from pydantic_core import MultiHostUrl
-from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing_extensions import Self
+from pydantic_settings import BaseSettings
 
 load_dotenv(find_dotenv())
 
@@ -17,8 +16,8 @@ class AppSettings(BaseSettings):
     fstr_db_name: str = os.getenv('FSTR_DB_NAME')
     fstr_db_host: str = os.getenv('FSTR_DB_HOST')
     fstr_db_port: int = os.getenv('FSTR_DB_PORT')
-    app_port: int = 8080
-    app_host: str = 'localhost'
+    app_port: int = os.getenv('APP_PORT')
+    app_host: str = os.getenv('APP_HOST')
     reload: bool = True
     cpu_count: int | None = None
     postgres_dsn: PostgresDsn = MultiHostUrl(
@@ -29,7 +28,6 @@ class AppSettings(BaseSettings):
     class Config:
         _env_file = ".env"
         _extra = 'allow'
-
 
 
 app_settings = AppSettings()

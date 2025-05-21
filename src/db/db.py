@@ -10,6 +10,7 @@ from typing import Union, Callable, Annotated, Type
 class InternalError(Exception):
     pass
 
+
 async def get_async_session() -> AsyncSession:
     async with async_session() as session:
         try:

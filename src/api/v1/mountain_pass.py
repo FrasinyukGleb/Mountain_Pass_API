@@ -1,10 +1,7 @@
-from typing import List
-
-from fastapi import APIRouter, Query, status
+from fastapi import APIRouter, status
 from starlette.responses import JSONResponse
 
 from src.db.db import db_dependency
-from src.models import StatusEnum
 from src.schemas import PassAddSchema
 from src.services.mountain_pass import Mountain_Pass
 
