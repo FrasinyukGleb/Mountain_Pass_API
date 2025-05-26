@@ -4,6 +4,7 @@ __all__ = [
     'UserSchema',
     'CoordsSchema',
     'LevelSchema',
+    'PassShowSchema'
 ]
 
 from .mountain_pass import (
@@ -12,4 +13,5 @@ from .mountain_pass import (
     LevelSchema,
     PassAddSchema,
     UserSchema,
+    PassShowSchema,
 )

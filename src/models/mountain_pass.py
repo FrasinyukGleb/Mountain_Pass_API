@@ -49,7 +49,7 @@ class Image(Base):
     id = Column(Integer, autoincrement=True, primary_key=True, index=True)
     title = Column(String(150), nullable=False)
     data = Column(LargeBinary, nullable=False)
-    pass_id = Column(Integer, ForeignKey('Mountain_Pass.id'), nullable=False)
+    mountain_pass_id = Column(Integer, ForeignKey('Mountain_Pass.id'), nullable=False)
     pass_added = relationship('PassAdded', back_populates='images')
 
 

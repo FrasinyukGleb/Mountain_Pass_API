@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 from typing import List, Optional
 
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 
 from src.db.db import db_dependency
@@ -12,6 +13,7 @@ from src.schemas import (
     LevelSchema,
     PassAddSchema,
     UserSchema,
+    PassShowSchema,
 )
 
 
@@ -78,3 +80,45 @@ class Mountain_Pass:
         user = await session.execute(select(User).filter(User.email == email))
         return user.scalar_one_or_none()
 
+    async def get_mountain_passes_by_user_id(self, user_id: int, session: db_dependency) -> List[PassShowSchema]:
+        _mountain_passes = await session.execute(select(PassAdded).where(PassAdded.user_id == user_id))
+        mountain_passes = _mountain_passes.scalars().all()
+        return [await self.get_info_mountain_pass(mountain_pass, session) for mountain_pass in mountain_passes]
+
+    async def get_info_mountain_pass(self, mountain_pass: PassAdded, session: db_dependency) -> PassShowSchema:
+        user = await self._get_user_by_id(mountain_pass.user_id, session)
+        coord = await self._get_coord_by_id(mountain_pass.coord_id, session)
+        level = await self._get_level_by_id(mountain_pass.level_id, session)
+        images = await self._get_images_by_mountain_pass_id(mountain_pass.id, session)
+        return PassShowSchema(
+            beauty_title=mountain_pass.beauty_title,
+            title=mountain_pass.title,
+            other_titles=mountain_pass.other_titles,
+            connect=mountain_pass.connect,
+            add_time=str(mountain_pass.add_time),
+            user=UserSchema(**jsonable_encoder(user)),
+            coords=CoordsSchema(**jsonable_encoder(coord)),
+            level=LevelSchema(**jsonable_encoder(level)),
+            images=[ImageSchema(**jsonable_encoder(image)) for image in images],
+            status=mountain_pass.status,
+        )
+
+    async def _get_user_by_id(self, user_id: int, session: db_dependency) -> User:
+        user = await session.execute(select(User).where(User.id == user_id))
+        return user.scalar()
+
+    async def _get_coord_by_id(self, coords_id: int, session: db_dependency) -> Coord:
+        coord = await session.execute(select(Coord).where(Coord.id == coords_id))
+        return coord.scalar()
+
+    async def _get_level_by_id(self, level_id: int, session: db_dependency) -> Level:
+        level = await session.execute(select(Level).where(Level.id == level_id))
+        return level.scalar()
+
+    async def _get_images_by_mountain_pass_id(self, mountain_pass_id: int, session: db_dependency) -> List[Image]:
+        images = await session.execute(select(Image).where(Image.mountain_pass_id == mountain_pass_id))
+        return images.scalars().all()
+
+    async def get_mountain_pass_by_id(self, mountain_pass_id: int, session: db_dependency) -> Optional[PassAdded]:
+        mountain_pass = await session.execute(select(PassAdded).where(PassAdded.id == mountain_pass_id))
+        return mountain_pass.scalar_one_or_none()

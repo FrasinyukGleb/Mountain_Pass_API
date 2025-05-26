@@ -2,6 +2,8 @@ from typing import List, Optional
 
 from pydantic import Base64Bytes, BaseModel, EmailStr, Field, PositiveFloat, PositiveInt
 
+from src.models import StatusEnum
+
 
 class UserSchema(BaseModel):
     email: EmailStr
@@ -42,3 +44,8 @@ class BaseMountainPass(BaseModel):
 
 class PassAddSchema(BaseMountainPass):
     user: UserSchema = Field(default=UserSchema)
+
+
+class PassShowSchema(BaseMountainPass):
+    user: UserSchema = Field(default=UserSchema)
+    status: str = Field(default=StatusEnum.new.value)
