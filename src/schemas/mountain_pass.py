@@ -49,3 +49,7 @@ class PassAddSchema(BaseMountainPass):
 class PassShowSchema(BaseMountainPass):
     user: UserSchema = Field(default=UserSchema)
     status: str = Field(default=StatusEnum.new.value)
+
+
+class PassUpdateSchema(BaseMountainPass):
+    pass

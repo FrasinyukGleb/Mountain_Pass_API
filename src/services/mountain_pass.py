@@ -3,9 +3,10 @@ from datetime import datetime
 from typing import List, Optional
 
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import select
+from sqlalchemy import select, update, delete
 
 from src.db.db import db_dependency
+from src.exceptions import PassUpdateError
 from src.models import Coord, Image, Level, PassAdded, User
 from src.schemas import (
     CoordsSchema,
@@ -13,7 +14,7 @@ from src.schemas import (
     LevelSchema,
     PassAddSchema,
     UserSchema,
-    PassShowSchema,
+    PassShowSchema, PassUpdateSchema,
 )
 
 
@@ -122,3 +123,41 @@ class Mountain_Pass:
     async def get_mountain_pass_by_id(self, mountain_pass_id: int, session: db_dependency) -> Optional[PassAdded]:
         mountain_pass = await session.execute(select(PassAdded).where(PassAdded.id == mountain_pass_id))
         return mountain_pass.scalar_one_or_none()
+
+    async def update_mountain_pass(
+        self,
+        db_mountain_pass: PassAdded,
+        data_update: PassUpdateSchema,
+        session: db_dependency,
+    ) -> bool:
+        mountain_pass_data = data_update.model_dump()
+        try:
+            mountain_pass_data['add_time'] = datetime.strptime(data_update.add_time, '%Y-%m-%d %H:%M:%S')
+            coords = mountain_pass_data.pop('coords')
+            level = mountain_pass_data.pop('level')
+            mountain_pass_data.pop('images')
+            await session.execute(update(Coord).where(Coord.id == db_mountain_pass.coord_id).values(coords))
+            await session.execute(update(Level).where(Level.id == db_mountain_pass.level_id).values(level))
+            await session.execute(delete(Image).where(Image.mountain_pass_id == db_mountain_pass.id))
+            if data_update.images:
+                await self._add_images(db_mountain_pass.id, data_update.images, session)
+            else:
+                await session.execute(delete(Image).where(Image.mountain_pass_id == db_mountain_pass.id))
+            await session.execute(update(PassAdded).where(PassAdded.id == db_mountain_pass.id).values(mountain_pass_data))
+            await session.commit()
+        except Exception as e:
+            # Перезаписываем на первоначальное значение
+            self.logger.warning(f'Error the update mountain_pass "{db_mountain_pass.id}". Delete data')
+            info_mountain_pass = await self.get_info_mountain_pass(db_mountain_pass, session)
+            await self._delete_mountain_pass(db_mountain_pass, session)
+            await self.add_mountain_pass(info_mountain_pass, session)
+            self.logger.warning('Adding the original mountain_pass. Success')
+            raise PassUpdateError(e)
+        return True
+
+    async def _delete_mountain_pass(self, mountain_pass: PassAdded, session: db_dependency) -> None:
+        await session.execute(delete(Image).where(Image.mountain_pass_id == mountain_pass.id))
+        await session.execute(delete(PassAdded).where(PassAdded.id == mountain_pass.id))
+        await session.execute(delete(Coord).where(Coord.id == mountain_pass.coord_id))
+        await session.execute(delete(Level).where(Level.id == mountain_pass.level_id))
+        await session.commit()
