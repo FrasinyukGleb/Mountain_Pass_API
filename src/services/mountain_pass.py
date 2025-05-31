@@ -14,7 +14,8 @@ from src.schemas import (
     LevelSchema,
     PassAddSchema,
     UserSchema,
-    PassShowSchema, PassUpdateSchema,
+    PassShowSchema,
+    PassUpdateSchema,
 )
 
 
