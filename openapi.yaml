@@ -1,0 +1,1185 @@
+openapi: 3.1.0
+info:
+  title: Mountain_Pass_API
+  description: |-
+    REST API для учёта и модерации горных перевалов.
+
+    Федерации Спортивного Туризма России (ФСТР) заказала разработку мобильного приложения для Android и iOS, которое упростит туристам задачу по отправке данных о перевале. Пользователи мобильного приложения будут вносить данные о перевале, при отправке данных будут вызваться методы REST API, которые в свою очередь будет вносить изменения в базу данных ФСТР для дальнейшей работы.
+  version: 0.1.0
+paths:
+  /submitData/:
+    post:
+      tags:
+      - mountain_pass
+      summary: Add Mountain Pass
+      operationId: add_mountain_pass_submitData__post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                beauty_title:
+                  type: string
+                  maxLength: 250
+                  title: Beauty Title
+                title:
+                  type: string
+                  maxLength: 250
+                  title: Title
+                other_titles:
+                  type: string
+                  maxLength: 250
+                  title: Other Titles
+                connect:
+                  type: string
+                  title: Connect
+                  default: ""
+                add_time:
+                  type: string
+                  title: Add Time
+                coords:
+                  properties:
+                    latitude:
+                      type: number
+                      exclusiveMinimum: 0
+                      title: Latitude
+                    longitude:
+                      type: number
+                      exclusiveMinimum: 0
+                      title: Longitude
+                    height:
+                      type: integer
+                      exclusiveMinimum: 0
+                      title: Height
+                  type: object
+                  required:
+                  - latitude
+                  - longitude
+                  - height
+                  title: CoordsSchema
+                level:
+                  properties:
+                    winter:
+                      type: string
+                      maxLength: 2
+                      title: Winter
+                      default: ""
+                    summer:
+                      type: string
+                      maxLength: 2
+                      title: Summer
+                      default: ""
+                    autumn:
+                      type: string
+                      maxLength: 2
+                      title: Autumn
+                      default: ""
+                    spring:
+                      type: string
+                      maxLength: 2
+                      title: Spring
+                      default: ""
+                  type: object
+                  title: LevelSchema
+                images:
+                  anyOf:
+                  - items:
+                      properties:
+                        data:
+                          type: string
+                          format: base64
+                          title: Data
+                        title:
+                          type: string
+                          maxLength: 150
+                          title: Title
+                      type: object
+                      required:
+                      - data
+                      - title
+                      title: ImageSchema
+                    type: array
+                  - type: "null"
+                  title: Images
+                  default: []
+                user:
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                      title: Email
+                    surname:
+                      type: string
+                      maxLength: 150
+                      title: Surname
+                    name:
+                      type: string
+                      maxLength: 150
+                      title: Name
+                    patronymic:
+                      anyOf:
+                      - type: string
+                        maxLength: 150
+                      - type: "null"
+                      title: Patronymic
+                      default: ""
+                    phone:
+                      anyOf:
+                      - type: string
+                        maxLength: 15
+                      - type: "null"
+                      title: Phone
+                  type: object
+                  required:
+                  - email
+                  - surname
+                  - name
+                  title: UserSchema
+              type: object
+              required:
+              - beauty_title
+              - title
+              - other_titles
+              - add_time
+              title: PassAddSchema
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    items:
+                      properties:
+                        loc:
+                          items:
+                            anyOf:
+                            - type: string
+                            - type: integer
+                          type: array
+                          title: Location
+                        msg:
+                          type: string
+                          title: Message
+                        type:
+                          type: string
+                          title: Error Type
+                      type: object
+                      required:
+                      - loc
+                      - msg
+                      - type
+                      title: ValidationError
+                    type: array
+                    title: Detail
+                type: object
+                title: HTTPValidationError
+    get:
+      tags:
+      - mountain_pass
+      summary: Get Mountain Pass By User Email
+      operationId: get_mountain_pass_by_user_email_submitData__get
+      parameters:
+      - name: user__email
+        in: query
+        required: true
+        schema:
+          type: string
+          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+          title: User  Email
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    beauty_title:
+                      type: string
+                      maxLength: 250
+                      title: Beauty Title
+                    title:
+                      type: string
+                      maxLength: 250
+                      title: Title
+                    other_titles:
+                      type: string
+                      maxLength: 250
+                      title: Other Titles
+                    connect:
+                      type: string
+                      title: Connect
+                      default: ""
+                    add_time:
+                      type: string
+                      title: Add Time
+                    coords:
+                      properties:
+                        latitude:
+                          type: number
+                          exclusiveMinimum: 0
+                          title: Latitude
+                        longitude:
+                          type: number
+                          exclusiveMinimum: 0
+                          title: Longitude
+                        height:
+                          type: integer
+                          exclusiveMinimum: 0
+                          title: Height
+                      type: object
+                      required:
+                      - latitude
+                      - longitude
+                      - height
+                      title: CoordsSchema
+                    level:
+                      properties:
+                        winter:
+                          type: string
+                          maxLength: 2
+                          title: Winter
+                          default: ""
+                        summer:
+                          type: string
+                          maxLength: 2
+                          title: Summer
+                          default: ""
+                        autumn:
+                          type: string
+                          maxLength: 2
+                          title: Autumn
+                          default: ""
+                        spring:
+                          type: string
+                          maxLength: 2
+                          title: Spring
+                          default: ""
+                      type: object
+                      title: LevelSchema
+                    images:
+                      anyOf:
+                      - items:
+                          properties:
+                            data:
+                              type: string
+                              format: base64
+                              title: Data
+                            title:
+                              type: string
+                              maxLength: 150
+                              title: Title
+                          type: object
+                          required:
+                          - data
+                          - title
+                          title: ImageSchema
+                        type: array
+                      - type: "null"
+                      title: Images
+                      default: []
+                    user:
+                      properties:
+                        email:
+                          type: string
+                          format: email
+                          title: Email
+                        surname:
+                          type: string
+                          maxLength: 150
+                          title: Surname
+                        name:
+                          type: string
+                          maxLength: 150
+                          title: Name
+                        patronymic:
+                          anyOf:
+                          - type: string
+                            maxLength: 150
+                          - type: "null"
+                          title: Patronymic
+                          default: ""
+                        phone:
+                          anyOf:
+                          - type: string
+                            maxLength: 15
+                          - type: "null"
+                          title: Phone
+                      type: object
+                      required:
+                      - email
+                      - surname
+                      - name
+                      title: UserSchema
+                    status:
+                      type: string
+                      title: Status
+                      default: new
+                  type: object
+                  required:
+                  - beauty_title
+                  - title
+                  - other_titles
+                  - add_time
+                  title: PassShowSchema
+                title: Response Get Mountain Pass By User Email Submitdata  Get
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    items:
+                      properties:
+                        loc:
+                          items:
+                            anyOf:
+                            - type: string
+                            - type: integer
+                          type: array
+                          title: Location
+                        msg:
+                          type: string
+                          title: Message
+                        type:
+                          type: string
+                          title: Error Type
+                      type: object
+                      required:
+                      - loc
+                      - msg
+                      - type
+                      title: ValidationError
+                    type: array
+                    title: Detail
+                type: object
+                title: HTTPValidationError
+  /submitData/{mountain_pass_id}:
+    get:
+      tags:
+      - mountain_pass
+      summary: Get Mountain Pass By Id
+      operationId: get_mountain_pass_by_id_submitData__mountain_pass_id__get
+      parameters:
+      - name: mountain_pass_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Mountain Pass Id
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                properties:
+                  beauty_title:
+                    type: string
+                    maxLength: 250
+                    title: Beauty Title
+                  title:
+                    type: string
+                    maxLength: 250
+                    title: Title
+                  other_titles:
+                    type: string
+                    maxLength: 250
+                    title: Other Titles
+                  connect:
+                    type: string
+                    title: Connect
+                    default: ""
+                  add_time:
+                    type: string
+                    title: Add Time
+                  coords:
+                    properties:
+                      latitude:
+                        type: number
+                        exclusiveMinimum: 0
+                        title: Latitude
+                      longitude:
+                        type: number
+                        exclusiveMinimum: 0
+                        title: Longitude
+                      height:
+                        type: integer
+                        exclusiveMinimum: 0
+                        title: Height
+                    type: object
+                    required:
+                    - latitude
+                    - longitude
+                    - height
+                    title: CoordsSchema
+                  level:
+                    properties:
+                      winter:
+                        type: string
+                        maxLength: 2
+                        title: Winter
+                        default: ""
+                      summer:
+                        type: string
+                        maxLength: 2
+                        title: Summer
+                        default: ""
+                      autumn:
+                        type: string
+                        maxLength: 2
+                        title: Autumn
+                        default: ""
+                      spring:
+                        type: string
+                        maxLength: 2
+                        title: Spring
+                        default: ""
+                    type: object
+                    title: LevelSchema
+                  images:
+                    anyOf:
+                    - items:
+                        properties:
+                          data:
+                            type: string
+                            format: base64
+                            title: Data
+                          title:
+                            type: string
+                            maxLength: 150
+                            title: Title
+                        type: object
+                        required:
+                        - data
+                        - title
+                        title: ImageSchema
+                      type: array
+                    - type: "null"
+                    title: Images
+                    default: []
+                  user:
+                    properties:
+                      email:
+                        type: string
+                        format: email
+                        title: Email
+                      surname:
+                        type: string
+                        maxLength: 150
+                        title: Surname
+                      name:
+                        type: string
+                        maxLength: 150
+                        title: Name
+                      patronymic:
+                        anyOf:
+                        - type: string
+                          maxLength: 150
+                        - type: "null"
+                        title: Patronymic
+                        default: ""
+                      phone:
+                        anyOf:
+                        - type: string
+                          maxLength: 15
+                        - type: "null"
+                        title: Phone
+                    type: object
+                    required:
+                    - email
+                    - surname
+                    - name
+                    title: UserSchema
+                  status:
+                    type: string
+                    title: Status
+                    default: new
+                type: object
+                required:
+                - beauty_title
+                - title
+                - other_titles
+                - add_time
+                title: PassShowSchema
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    items:
+                      properties:
+                        loc:
+                          items:
+                            anyOf:
+                            - type: string
+                            - type: integer
+                          type: array
+                          title: Location
+                        msg:
+                          type: string
+                          title: Message
+                        type:
+                          type: string
+                          title: Error Type
+                      type: object
+                      required:
+                      - loc
+                      - msg
+                      - type
+                      title: ValidationError
+                    type: array
+                    title: Detail
+                type: object
+                title: HTTPValidationError
+    patch:
+      tags:
+      - mountain_pass
+      summary: Update Mountain Pass By Id
+      operationId: update_mountain_pass_by_id_submitData__mountain_pass_id__patch
+      parameters:
+      - name: mountain_pass_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Mountain Pass Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                beauty_title:
+                  type: string
+                  maxLength: 250
+                  title: Beauty Title
+                title:
+                  type: string
+                  maxLength: 250
+                  title: Title
+                other_titles:
+                  type: string
+                  maxLength: 250
+                  title: Other Titles
+                connect:
+                  type: string
+                  title: Connect
+                  default: ""
+                add_time:
+                  type: string
+                  title: Add Time
+                coords:
+                  properties:
+                    latitude:
+                      type: number
+                      exclusiveMinimum: 0
+                      title: Latitude
+                    longitude:
+                      type: number
+                      exclusiveMinimum: 0
+                      title: Longitude
+                    height:
+                      type: integer
+                      exclusiveMinimum: 0
+                      title: Height
+                  type: object
+                  required:
+                  - latitude
+                  - longitude
+                  - height
+                  title: CoordsSchema
+                level:
+                  properties:
+                    winter:
+                      type: string
+                      maxLength: 2
+                      title: Winter
+                      default: ""
+                    summer:
+                      type: string
+                      maxLength: 2
+                      title: Summer
+                      default: ""
+                    autumn:
+                      type: string
+                      maxLength: 2
+                      title: Autumn
+                      default: ""
+                    spring:
+                      type: string
+                      maxLength: 2
+                      title: Spring
+                      default: ""
+                  type: object
+                  title: LevelSchema
+                images:
+                  anyOf:
+                  - items:
+                      properties:
+                        data:
+                          type: string
+                          format: base64
+                          title: Data
+                        title:
+                          type: string
+                          maxLength: 150
+                          title: Title
+                      type: object
+                      required:
+                      - data
+                      - title
+                      title: ImageSchema
+                    type: array
+                  - type: "null"
+                  title: Images
+                  default: []
+              type: object
+              required:
+              - beauty_title
+              - title
+              - other_titles
+              - add_time
+              title: PassUpdateSchema
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                properties:
+                  detail:
+                    items:
+                      properties:
+                        loc:
+                          items:
+                            anyOf:
+                            - type: string
+                            - type: integer
+                          type: array
+                          title: Location
+                        msg:
+                          type: string
+                          title: Message
+                        type:
+                          type: string
+                          title: Error Type
+                      type: object
+                      required:
+                      - loc
+                      - msg
+                      - type
+                      title: ValidationError
+                    type: array
+                    title: Detail
+                type: object
+                title: HTTPValidationError
+components:
+  schemas:
+    CoordsSchema:
+      properties:
+        latitude:
+          type: number
+          exclusiveMinimum: 0
+          title: Latitude
+        longitude:
+          type: number
+          exclusiveMinimum: 0
+          title: Longitude
+        height:
+          type: integer
+          exclusiveMinimum: 0
+          title: Height
+      type: object
+      required:
+      - latitude
+      - longitude
+      - height
+      title: CoordsSchema
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            properties:
+              loc:
+                items:
+                  anyOf:
+                  - type: string
+                  - type: integer
+                type: array
+                title: Location
+              msg:
+                type: string
+                title: Message
+              type:
+                type: string
+                title: Error Type
+            type: object
+            required:
+            - loc
+            - msg
+            - type
+            title: ValidationError
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ImageSchema:
+      properties:
+        data:
+          type: string
+          format: base64
+          title: Data
+        title:
+          type: string
+          maxLength: 150
+          title: Title
+      type: object
+      required:
+      - data
+      - title
+      title: ImageSchema
+    LevelSchema:
+      properties:
+        winter:
+          type: string
+          maxLength: 2
+          title: Winter
+          default: ""
+        summer:
+          type: string
+          maxLength: 2
+          title: Summer
+          default: ""
+        autumn:
+          type: string
+          maxLength: 2
+          title: Autumn
+          default: ""
+        spring:
+          type: string
+          maxLength: 2
+          title: Spring
+          default: ""
+      type: object
+      title: LevelSchema
+    PassAddSchema:
+      properties:
+        beauty_title:
+          type: string
+          maxLength: 250
+          title: Beauty Title
+        title:
+          type: string
+          maxLength: 250
+          title: Title
+        other_titles:
+          type: string
+          maxLength: 250
+          title: Other Titles
+        connect:
+          type: string
+          title: Connect
+          default: ""
+        add_time:
+          type: string
+          title: Add Time
+        coords:
+          properties:
+            latitude:
+              type: number
+              exclusiveMinimum: 0
+              title: Latitude
+            longitude:
+              type: number
+              exclusiveMinimum: 0
+              title: Longitude
+            height:
+              type: integer
+              exclusiveMinimum: 0
+              title: Height
+          type: object
+          required:
+          - latitude
+          - longitude
+          - height
+          title: CoordsSchema
+        level:
+          properties:
+            winter:
+              type: string
+              maxLength: 2
+              title: Winter
+              default: ""
+            summer:
+              type: string
+              maxLength: 2
+              title: Summer
+              default: ""
+            autumn:
+              type: string
+              maxLength: 2
+              title: Autumn
+              default: ""
+            spring:
+              type: string
+              maxLength: 2
+              title: Spring
+              default: ""
+          type: object
+          title: LevelSchema
+        images:
+          anyOf:
+          - items:
+              properties:
+                data:
+                  type: string
+                  format: base64
+                  title: Data
+                title:
+                  type: string
+                  maxLength: 150
+                  title: Title
+              type: object
+              required:
+              - data
+              - title
+              title: ImageSchema
+            type: array
+          - type: "null"
+          title: Images
+          default: []
+        user:
+          properties:
+            email:
+              type: string
+              format: email
+              title: Email
+            surname:
+              type: string
+              maxLength: 150
+              title: Surname
+            name:
+              type: string
+              maxLength: 150
+              title: Name
+            patronymic:
+              anyOf:
+              - type: string
+                maxLength: 150
+              - type: "null"
+              title: Patronymic
+              default: ""
+            phone:
+              anyOf:
+              - type: string
+                maxLength: 15
+              - type: "null"
+              title: Phone
+          type: object
+          required:
+          - email
+          - surname
+          - name
+          title: UserSchema
+      type: object
+      required:
+      - beauty_title
+      - title
+      - other_titles
+      - add_time
+      title: PassAddSchema
+    PassShowSchema:
+      properties:
+        beauty_title:
+          type: string
+          maxLength: 250
+          title: Beauty Title
+        title:
+          type: string
+          maxLength: 250
+          title: Title
+        other_titles:
+          type: string
+          maxLength: 250
+          title: Other Titles
+        connect:
+          type: string
+          title: Connect
+          default: ""
+        add_time:
+          type: string
+          title: Add Time
+        coords:
+          properties:
+            latitude:
+              type: number
+              exclusiveMinimum: 0
+              title: Latitude
+            longitude:
+              type: number
+              exclusiveMinimum: 0
+              title: Longitude
+            height:
+              type: integer
+              exclusiveMinimum: 0
+              title: Height
+          type: object
+          required:
+          - latitude
+          - longitude
+          - height
+          title: CoordsSchema
+        level:
+          properties:
+            winter:
+              type: string
+              maxLength: 2
+              title: Winter
+              default: ""
+            summer:
+              type: string
+              maxLength: 2
+              title: Summer
+              default: ""
+            autumn:
+              type: string
+              maxLength: 2
+              title: Autumn
+              default: ""
+            spring:
+              type: string
+              maxLength: 2
+              title: Spring
+              default: ""
+          type: object
+          title: LevelSchema
+        images:
+          anyOf:
+          - items:
+              properties:
+                data:
+                  type: string
+                  format: base64
+                  title: Data
+                title:
+                  type: string
+                  maxLength: 150
+                  title: Title
+              type: object
+              required:
+              - data
+              - title
+              title: ImageSchema
+            type: array
+          - type: "null"
+          title: Images
+          default: []
+        user:
+          properties:
+            email:
+              type: string
+              format: email
+              title: Email
+            surname:
+              type: string
+              maxLength: 150
+              title: Surname
+            name:
+              type: string
+              maxLength: 150
+              title: Name
+            patronymic:
+              anyOf:
+              - type: string
+                maxLength: 150
+              - type: "null"
+              title: Patronymic
+              default: ""
+            phone:
+              anyOf:
+              - type: string
+                maxLength: 15
+              - type: "null"
+              title: Phone
+          type: object
+          required:
+          - email
+          - surname
+          - name
+          title: UserSchema
+        status:
+          type: string
+          title: Status
+          default: new
+      type: object
+      required:
+      - beauty_title
+      - title
+      - other_titles
+      - add_time
+      title: PassShowSchema
+    PassUpdateSchema:
+      properties:
+        beauty_title:
+          type: string
+          maxLength: 250
+          title: Beauty Title
+        title:
+          type: string
+          maxLength: 250
+          title: Title
+        other_titles:
+          type: string
+          maxLength: 250
+          title: Other Titles
+        connect:
+          type: string
+          title: Connect
+          default: ""
+        add_time:
+          type: string
+          title: Add Time
+        coords:
+          properties:
+            latitude:
+              type: number
+              exclusiveMinimum: 0
+              title: Latitude
+            longitude:
+              type: number
+              exclusiveMinimum: 0
+              title: Longitude
+            height:
+              type: integer
+              exclusiveMinimum: 0
+              title: Height
+          type: object
+          required:
+          - latitude
+          - longitude
+          - height
+          title: CoordsSchema
+        level:
+          properties:
+            winter:
+              type: string
+              maxLength: 2
+              title: Winter
+              default: ""
+            summer:
+              type: string
+              maxLength: 2
+              title: Summer
+              default: ""
+            autumn:
+              type: string
+              maxLength: 2
+              title: Autumn
+              default: ""
+            spring:
+              type: string
+              maxLength: 2
+              title: Spring
+              default: ""
+          type: object
+          title: LevelSchema
+        images:
+          anyOf:
+          - items:
+              properties:
+                data:
+                  type: string
+                  format: base64
+                  title: Data
+                title:
+                  type: string
+                  maxLength: 150
+                  title: Title
+              type: object
+              required:
+              - data
+              - title
+              title: ImageSchema
+            type: array
+          - type: "null"
+          title: Images
+          default: []
+      type: object
+      required:
+      - beauty_title
+      - title
+      - other_titles
+      - add_time
+      title: PassUpdateSchema
+    UserSchema:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+        surname:
+          type: string
+          maxLength: 150
+          title: Surname
+        name:
+          type: string
+          maxLength: 150
+          title: Name
+        patronymic:
+          anyOf:
+          - type: string
+            maxLength: 150
+          - type: "null"
+          title: Patronymic
+          default: ""
+        phone:
+          anyOf:
+          - type: string
+            maxLength: 15
+          - type: "null"
+          title: Phone
+      type: object
+      required:
+      - email
+      - surname
+      - name
+      title: UserSchema
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError

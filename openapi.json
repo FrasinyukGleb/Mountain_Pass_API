@@ -1,7 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "FastAPI",
+    "title": "Mountain_Pass_API",
+    "description": "REST API для учёта и модерации горных перевалов.\n\nФедерации Спортивного Туризма России (ФСТР) заказала разработку мобильного приложения для Android и iOS, которое упростит туристам задачу по отправке данных о перевале. Пользователи мобильного приложения будут вносить данные о перевале, при отправке данных будут вызваться методы REST API, которые в свою очередь будет вносить изменения в базу данных ФСТР для дальнейшей работы.",
     "version": "0.1.0"
   },
   "paths": {
@@ -17,7 +18,179 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PassAddSchema"
+                "properties": {
+                  "beauty_title": {
+                    "type": "string",
+                    "maxLength": 250,
+                    "title": "Beauty Title"
+                  },
+                  "title": {
+                    "type": "string",
+                    "maxLength": 250,
+                    "title": "Title"
+                  },
+                  "other_titles": {
+                    "type": "string",
+                    "maxLength": 250,
+                    "title": "Other Titles"
+                  },
+                  "connect": {
+                    "type": "string",
+                    "title": "Connect",
+                    "default": ""
+                  },
+                  "add_time": {
+                    "type": "string",
+                    "title": "Add Time"
+                  },
+                  "coords": {
+                    "properties": {
+                      "latitude": {
+                        "type": "number",
+                        "exclusiveMinimum": 0,
+                        "title": "Latitude"
+                      },
+                      "longitude": {
+                        "type": "number",
+                        "exclusiveMinimum": 0,
+                        "title": "Longitude"
+                      },
+                      "height": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "title": "Height"
+                      }
+                    },
+                    "type": "object",
+                    "required": [
+                      "latitude",
+                      "longitude",
+                      "height"
+                    ],
+                    "title": "CoordsSchema"
+                  },
+                  "level": {
+                    "properties": {
+                      "winter": {
+                        "type": "string",
+                        "maxLength": 2,
+                        "title": "Winter",
+                        "default": ""
+                      },
+                      "summer": {
+                        "type": "string",
+                        "maxLength": 2,
+                        "title": "Summer",
+                        "default": ""
+                      },
+                      "autumn": {
+                        "type": "string",
+                        "maxLength": 2,
+                        "title": "Autumn",
+                        "default": ""
+                      },
+                      "spring": {
+                        "type": "string",
+                        "maxLength": 2,
+                        "title": "Spring",
+                        "default": ""
+                      }
+                    },
+                    "type": "object",
+                    "title": "LevelSchema"
+                  },
+                  "images": {
+                    "anyOf": [
+                      {
+                        "items": {
+                          "properties": {
+                            "data": {
+                              "type": "string",
+                              "format": "base64",
+                              "title": "Data"
+                            },
+                            "title": {
+                              "type": "string",
+                              "maxLength": 150,
+                              "title": "Title"
+                            }
+                          },
+                          "type": "object",
+                          "required": [
+                            "data",
+                            "title"
+                          ],
+                          "title": "ImageSchema"
+                        },
+                        "type": "array"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Images",
+                    "default": []
+                  },
+                  "user": {
+                    "properties": {
+                      "email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "Email"
+                      },
+                      "surname": {
+                        "type": "string",
+                        "maxLength": 150,
+                        "title": "Surname"
+                      },
+                      "name": {
+                        "type": "string",
+                        "maxLength": 150,
+                        "title": "Name"
+                      },
+                      "patronymic": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 150
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "title": "Patronymic",
+                        "default": ""
+                      },
+                      "phone": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 15
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "title": "Phone"
+                      }
+                    },
+                    "type": "object",
+                    "required": [
+                      "email",
+                      "surname",
+                      "name"
+                    ],
+                    "title": "UserSchema"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "beauty_title",
+                  "title",
+                  "other_titles",
+                  "add_time"
+                ],
+                "title": "PassAddSchema"
               }
             }
           }
@@ -27,9 +200,7 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {
-
-                }
+                "schema": {}
               }
             }
           },
@@ -38,7 +209,47 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "properties": {
+                    "detail": {
+                      "items": {
+                        "properties": {
+                          "loc": {
+                            "items": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "integer"
+                                }
+                              ]
+                            },
+                            "type": "array",
+                            "title": "Location"
+                          },
+                          "msg": {
+                            "type": "string",
+                            "title": "Message"
+                          },
+                          "type": {
+                            "type": "string",
+                            "title": "Error Type"
+                          }
+                        },
+                        "type": "object",
+                        "required": [
+                          "loc",
+                          "msg",
+                          "type"
+                        ],
+                        "title": "ValidationError"
+                      },
+                      "type": "array",
+                      "title": "Detail"
+                    }
+                  },
+                  "type": "object",
+                  "title": "HTTPValidationError"
                 }
               }
             }
@@ -71,7 +282,184 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/PassShowSchema"
+                    "properties": {
+                      "beauty_title": {
+                        "type": "string",
+                        "maxLength": 250,
+                        "title": "Beauty Title"
+                      },
+                      "title": {
+                        "type": "string",
+                        "maxLength": 250,
+                        "title": "Title"
+                      },
+                      "other_titles": {
+                        "type": "string",
+                        "maxLength": 250,
+                        "title": "Other Titles"
+                      },
+                      "connect": {
+                        "type": "string",
+                        "title": "Connect",
+                        "default": ""
+                      },
+                      "add_time": {
+                        "type": "string",
+                        "title": "Add Time"
+                      },
+                      "coords": {
+                        "properties": {
+                          "latitude": {
+                            "type": "number",
+                            "exclusiveMinimum": 0,
+                            "title": "Latitude"
+                          },
+                          "longitude": {
+                            "type": "number",
+                            "exclusiveMinimum": 0,
+                            "title": "Longitude"
+                          },
+                          "height": {
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "title": "Height"
+                          }
+                        },
+                        "type": "object",
+                        "required": [
+                          "latitude",
+                          "longitude",
+                          "height"
+                        ],
+                        "title": "CoordsSchema"
+                      },
+                      "level": {
+                        "properties": {
+                          "winter": {
+                            "type": "string",
+                            "maxLength": 2,
+                            "title": "Winter",
+                            "default": ""
+                          },
+                          "summer": {
+                            "type": "string",
+                            "maxLength": 2,
+                            "title": "Summer",
+                            "default": ""
+                          },
+                          "autumn": {
+                            "type": "string",
+                            "maxLength": 2,
+                            "title": "Autumn",
+                            "default": ""
+                          },
+                          "spring": {
+                            "type": "string",
+                            "maxLength": 2,
+                            "title": "Spring",
+                            "default": ""
+                          }
+                        },
+                        "type": "object",
+                        "title": "LevelSchema"
+                      },
+                      "images": {
+                        "anyOf": [
+                          {
+                            "items": {
+                              "properties": {
+                                "data": {
+                                  "type": "string",
+                                  "format": "base64",
+                                  "title": "Data"
+                                },
+                                "title": {
+                                  "type": "string",
+                                  "maxLength": 150,
+                                  "title": "Title"
+                                }
+                              },
+                              "type": "object",
+                              "required": [
+                                "data",
+                                "title"
+                              ],
+                              "title": "ImageSchema"
+                            },
+                            "type": "array"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "title": "Images",
+                        "default": []
+                      },
+                      "user": {
+                        "properties": {
+                          "email": {
+                            "type": "string",
+                            "format": "email",
+                            "title": "Email"
+                          },
+                          "surname": {
+                            "type": "string",
+                            "maxLength": 150,
+                            "title": "Surname"
+                          },
+                          "name": {
+                            "type": "string",
+                            "maxLength": 150,
+                            "title": "Name"
+                          },
+                          "patronymic": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "maxLength": 150
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Patronymic",
+                            "default": ""
+                          },
+                          "phone": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "maxLength": 15
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Phone"
+                          }
+                        },
+                        "type": "object",
+                        "required": [
+                          "email",
+                          "surname",
+                          "name"
+                        ],
+                        "title": "UserSchema"
+                      },
+                      "status": {
+                        "type": "string",
+                        "title": "Status",
+                        "default": "new"
+                      }
+                    },
+                    "type": "object",
+                    "required": [
+                      "beauty_title",
+                      "title",
+                      "other_titles",
+                      "add_time"
+                    ],
+                    "title": "PassShowSchema"
                   },
                   "title": "Response Get Mountain Pass By User Email Submitdata  Get"
                 }
@@ -83,7 +471,47 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "properties": {
+                    "detail": {
+                      "items": {
+                        "properties": {
+                          "loc": {
+                            "items": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "integer"
+                                }
+                              ]
+                            },
+                            "type": "array",
+                            "title": "Location"
+                          },
+                          "msg": {
+                            "type": "string",
+                            "title": "Message"
+                          },
+                          "type": {
+                            "type": "string",
+                            "title": "Error Type"
+                          }
+                        },
+                        "type": "object",
+                        "required": [
+                          "loc",
+                          "msg",
+                          "type"
+                        ],
+                        "title": "ValidationError"
+                      },
+                      "type": "array",
+                      "title": "Detail"
+                    }
+                  },
+                  "type": "object",
+                  "title": "HTTPValidationError"
                 }
               }
             }
@@ -115,7 +543,184 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PassShowSchema"
+                  "properties": {
+                    "beauty_title": {
+                      "type": "string",
+                      "maxLength": 250,
+                      "title": "Beauty Title"
+                    },
+                    "title": {
+                      "type": "string",
+                      "maxLength": 250,
+                      "title": "Title"
+                    },
+                    "other_titles": {
+                      "type": "string",
+                      "maxLength": 250,
+                      "title": "Other Titles"
+                    },
+                    "connect": {
+                      "type": "string",
+                      "title": "Connect",
+                      "default": ""
+                    },
+                    "add_time": {
+                      "type": "string",
+                      "title": "Add Time"
+                    },
+                    "coords": {
+                      "properties": {
+                        "latitude": {
+                          "type": "number",
+                          "exclusiveMinimum": 0,
+                          "title": "Latitude"
+                        },
+                        "longitude": {
+                          "type": "number",
+                          "exclusiveMinimum": 0,
+                          "title": "Longitude"
+                        },
+                        "height": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "title": "Height"
+                        }
+                      },
+                      "type": "object",
+                      "required": [
+                        "latitude",
+                        "longitude",
+                        "height"
+                      ],
+                      "title": "CoordsSchema"
+                    },
+                    "level": {
+                      "properties": {
+                        "winter": {
+                          "type": "string",
+                          "maxLength": 2,
+                          "title": "Winter",
+                          "default": ""
+                        },
+                        "summer": {
+                          "type": "string",
+                          "maxLength": 2,
+                          "title": "Summer",
+                          "default": ""
+                        },
+                        "autumn": {
+                          "type": "string",
+                          "maxLength": 2,
+                          "title": "Autumn",
+                          "default": ""
+                        },
+                        "spring": {
+                          "type": "string",
+                          "maxLength": 2,
+                          "title": "Spring",
+                          "default": ""
+                        }
+                      },
+                      "type": "object",
+                      "title": "LevelSchema"
+                    },
+                    "images": {
+                      "anyOf": [
+                        {
+                          "items": {
+                            "properties": {
+                              "data": {
+                                "type": "string",
+                                "format": "base64",
+                                "title": "Data"
+                              },
+                              "title": {
+                                "type": "string",
+                                "maxLength": 150,
+                                "title": "Title"
+                              }
+                            },
+                            "type": "object",
+                            "required": [
+                              "data",
+                              "title"
+                            ],
+                            "title": "ImageSchema"
+                          },
+                          "type": "array"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "title": "Images",
+                      "default": []
+                    },
+                    "user": {
+                      "properties": {
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "title": "Email"
+                        },
+                        "surname": {
+                          "type": "string",
+                          "maxLength": 150,
+                          "title": "Surname"
+                        },
+                        "name": {
+                          "type": "string",
+                          "maxLength": 150,
+                          "title": "Name"
+                        },
+                        "patronymic": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "maxLength": 150
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ],
+                          "title": "Patronymic",
+                          "default": ""
+                        },
+                        "phone": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "maxLength": 15
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ],
+                          "title": "Phone"
+                        }
+                      },
+                      "type": "object",
+                      "required": [
+                        "email",
+                        "surname",
+                        "name"
+                      ],
+                      "title": "UserSchema"
+                    },
+                    "status": {
+                      "type": "string",
+                      "title": "Status",
+                      "default": "new"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "beauty_title",
+                    "title",
+                    "other_titles",
+                    "add_time"
+                  ],
+                  "title": "PassShowSchema"
                 }
               }
             }
@@ -125,7 +730,47 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "properties": {
+                    "detail": {
+                      "items": {
+                        "properties": {
+                          "loc": {
+                            "items": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "integer"
+                                }
+                              ]
+                            },
+                            "type": "array",
+                            "title": "Location"
+                          },
+                          "msg": {
+                            "type": "string",
+                            "title": "Message"
+                          },
+                          "type": {
+                            "type": "string",
+                            "title": "Error Type"
+                          }
+                        },
+                        "type": "object",
+                        "required": [
+                          "loc",
+                          "msg",
+                          "type"
+                        ],
+                        "title": "ValidationError"
+                      },
+                      "type": "array",
+                      "title": "Detail"
+                    }
+                  },
+                  "type": "object",
+                  "title": "HTTPValidationError"
                 }
               }
             }
@@ -154,7 +799,128 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PassUpdateSchema"
+                "properties": {
+                  "beauty_title": {
+                    "type": "string",
+                    "maxLength": 250,
+                    "title": "Beauty Title"
+                  },
+                  "title": {
+                    "type": "string",
+                    "maxLength": 250,
+                    "title": "Title"
+                  },
+                  "other_titles": {
+                    "type": "string",
+                    "maxLength": 250,
+                    "title": "Other Titles"
+                  },
+                  "connect": {
+                    "type": "string",
+                    "title": "Connect",
+                    "default": ""
+                  },
+                  "add_time": {
+                    "type": "string",
+                    "title": "Add Time"
+                  },
+                  "coords": {
+                    "properties": {
+                      "latitude": {
+                        "type": "number",
+                        "exclusiveMinimum": 0,
+                        "title": "Latitude"
+                      },
+                      "longitude": {
+                        "type": "number",
+                        "exclusiveMinimum": 0,
+                        "title": "Longitude"
+                      },
+                      "height": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "title": "Height"
+                      }
+                    },
+                    "type": "object",
+                    "required": [
+                      "latitude",
+                      "longitude",
+                      "height"
+                    ],
+                    "title": "CoordsSchema"
+                  },
+                  "level": {
+                    "properties": {
+                      "winter": {
+                        "type": "string",
+                        "maxLength": 2,
+                        "title": "Winter",
+                        "default": ""
+                      },
+                      "summer": {
+                        "type": "string",
+                        "maxLength": 2,
+                        "title": "Summer",
+                        "default": ""
+                      },
+                      "autumn": {
+                        "type": "string",
+                        "maxLength": 2,
+                        "title": "Autumn",
+                        "default": ""
+                      },
+                      "spring": {
+                        "type": "string",
+                        "maxLength": 2,
+                        "title": "Spring",
+                        "default": ""
+                      }
+                    },
+                    "type": "object",
+                    "title": "LevelSchema"
+                  },
+                  "images": {
+                    "anyOf": [
+                      {
+                        "items": {
+                          "properties": {
+                            "data": {
+                              "type": "string",
+                              "format": "base64",
+                              "title": "Data"
+                            },
+                            "title": {
+                              "type": "string",
+                              "maxLength": 150,
+                              "title": "Title"
+                            }
+                          },
+                          "type": "object",
+                          "required": [
+                            "data",
+                            "title"
+                          ],
+                          "title": "ImageSchema"
+                        },
+                        "type": "array"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Images",
+                    "default": []
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "beauty_title",
+                  "title",
+                  "other_titles",
+                  "add_time"
+                ],
+                "title": "PassUpdateSchema"
               }
             }
           }
@@ -164,9 +930,7 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {
-
-                }
+                "schema": {}
               }
             }
           },
@@ -175,7 +939,47 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "properties": {
+                    "detail": {
+                      "items": {
+                        "properties": {
+                          "loc": {
+                            "items": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "integer"
+                                }
+                              ]
+                            },
+                            "type": "array",
+                            "title": "Location"
+                          },
+                          "msg": {
+                            "type": "string",
+                            "title": "Message"
+                          },
+                          "type": {
+                            "type": "string",
+                            "title": "Error Type"
+                          }
+                        },
+                        "type": "object",
+                        "required": [
+                          "loc",
+                          "msg",
+                          "type"
+                        ],
+                        "title": "ValidationError"
+                      },
+                      "type": "array",
+                      "title": "Detail"
+                    }
+                  },
+                  "type": "object",
+                  "title": "HTTPValidationError"
                 }
               }
             }
@@ -216,7 +1020,37 @@
         "properties": {
           "detail": {
             "items": {
-              "$ref": "#/components/schemas/ValidationError"
+              "properties": {
+                "loc": {
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      }
+                    ]
+                  },
+                  "type": "array",
+                  "title": "Location"
+                },
+                "msg": {
+                  "type": "string",
+                  "title": "Message"
+                },
+                "type": {
+                  "type": "string",
+                  "title": "Error Type"
+                }
+              },
+              "type": "object",
+              "required": [
+                "loc",
+                "msg",
+                "type"
+              ],
+              "title": "ValidationError"
             },
             "type": "array",
             "title": "Detail"
@@ -302,16 +1136,83 @@
             "title": "Add Time"
           },
           "coords": {
-            "$ref": "#/components/schemas/CoordsSchema"
+            "properties": {
+              "latitude": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "title": "Latitude"
+              },
+              "longitude": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "title": "Longitude"
+              },
+              "height": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "title": "Height"
+              }
+            },
+            "type": "object",
+            "required": [
+              "latitude",
+              "longitude",
+              "height"
+            ],
+            "title": "CoordsSchema"
           },
           "level": {
-            "$ref": "#/components/schemas/LevelSchema"
+            "properties": {
+              "winter": {
+                "type": "string",
+                "maxLength": 2,
+                "title": "Winter",
+                "default": ""
+              },
+              "summer": {
+                "type": "string",
+                "maxLength": 2,
+                "title": "Summer",
+                "default": ""
+              },
+              "autumn": {
+                "type": "string",
+                "maxLength": 2,
+                "title": "Autumn",
+                "default": ""
+              },
+              "spring": {
+                "type": "string",
+                "maxLength": 2,
+                "title": "Spring",
+                "default": ""
+              }
+            },
+            "type": "object",
+            "title": "LevelSchema"
           },
           "images": {
             "anyOf": [
               {
                 "items": {
-                  "$ref": "#/components/schemas/ImageSchema"
+                  "properties": {
+                    "data": {
+                      "type": "string",
+                      "format": "base64",
+                      "title": "Data"
+                    },
+                    "title": {
+                      "type": "string",
+                      "maxLength": 150,
+                      "title": "Title"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "title"
+                  ],
+                  "title": "ImageSchema"
                 },
                 "type": "array"
               },
@@ -323,7 +1224,55 @@
             "default": []
           },
           "user": {
-            "$ref": "#/components/schemas/UserSchema"
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email",
+                "title": "Email"
+              },
+              "surname": {
+                "type": "string",
+                "maxLength": 150,
+                "title": "Surname"
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 150,
+                "title": "Name"
+              },
+              "patronymic": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 150
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Patronymic",
+                "default": ""
+              },
+              "phone": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 15
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Phone"
+              }
+            },
+            "type": "object",
+            "required": [
+              "email",
+              "surname",
+              "name"
+            ],
+            "title": "UserSchema"
           }
         },
         "type": "object",
@@ -362,16 +1311,83 @@
             "title": "Add Time"
           },
           "coords": {
-            "$ref": "#/components/schemas/CoordsSchema"
+            "properties": {
+              "latitude": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "title": "Latitude"
+              },
+              "longitude": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "title": "Longitude"
+              },
+              "height": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "title": "Height"
+              }
+            },
+            "type": "object",
+            "required": [
+              "latitude",
+              "longitude",
+              "height"
+            ],
+            "title": "CoordsSchema"
           },
           "level": {
-            "$ref": "#/components/schemas/LevelSchema"
+            "properties": {
+              "winter": {
+                "type": "string",
+                "maxLength": 2,
+                "title": "Winter",
+                "default": ""
+              },
+              "summer": {
+                "type": "string",
+                "maxLength": 2,
+                "title": "Summer",
+                "default": ""
+              },
+              "autumn": {
+                "type": "string",
+                "maxLength": 2,
+                "title": "Autumn",
+                "default": ""
+              },
+              "spring": {
+                "type": "string",
+                "maxLength": 2,
+                "title": "Spring",
+                "default": ""
+              }
+            },
+            "type": "object",
+            "title": "LevelSchema"
           },
           "images": {
             "anyOf": [
               {
                 "items": {
-                  "$ref": "#/components/schemas/ImageSchema"
+                  "properties": {
+                    "data": {
+                      "type": "string",
+                      "format": "base64",
+                      "title": "Data"
+                    },
+                    "title": {
+                      "type": "string",
+                      "maxLength": 150,
+                      "title": "Title"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "title"
+                  ],
+                  "title": "ImageSchema"
                 },
                 "type": "array"
               },
@@ -383,7 +1399,55 @@
             "default": []
           },
           "user": {
-            "$ref": "#/components/schemas/UserSchema"
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email",
+                "title": "Email"
+              },
+              "surname": {
+                "type": "string",
+                "maxLength": 150,
+                "title": "Surname"
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 150,
+                "title": "Name"
+              },
+              "patronymic": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 150
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Patronymic",
+                "default": ""
+              },
+              "phone": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 15
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Phone"
+              }
+            },
+            "type": "object",
+            "required": [
+              "email",
+              "surname",
+              "name"
+            ],
+            "title": "UserSchema"
           },
           "status": {
             "type": "string",
@@ -427,16 +1491,83 @@
             "title": "Add Time"
           },
           "coords": {
-            "$ref": "#/components/schemas/CoordsSchema"
+            "properties": {
+              "latitude": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "title": "Latitude"
+              },
+              "longitude": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "title": "Longitude"
+              },
+              "height": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "title": "Height"
+              }
+            },
+            "type": "object",
+            "required": [
+              "latitude",
+              "longitude",
+              "height"
+            ],
+            "title": "CoordsSchema"
           },
           "level": {
-            "$ref": "#/components/schemas/LevelSchema"
+            "properties": {
+              "winter": {
+                "type": "string",
+                "maxLength": 2,
+                "title": "Winter",
+                "default": ""
+              },
+              "summer": {
+                "type": "string",
+                "maxLength": 2,
+                "title": "Summer",
+                "default": ""
+              },
+              "autumn": {
+                "type": "string",
+                "maxLength": 2,
+                "title": "Autumn",
+                "default": ""
+              },
+              "spring": {
+                "type": "string",
+                "maxLength": 2,
+                "title": "Spring",
+                "default": ""
+              }
+            },
+            "type": "object",
+            "title": "LevelSchema"
           },
           "images": {
             "anyOf": [
               {
                 "items": {
-                  "$ref": "#/components/schemas/ImageSchema"
+                  "properties": {
+                    "data": {
+                      "type": "string",
+                      "format": "base64",
+                      "title": "Data"
+                    },
+                    "title": {
+                      "type": "string",
+                      "maxLength": 150,
+                      "title": "Title"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "title"
+                  ],
+                  "title": "ImageSchema"
                 },
                 "type": "array"
               },
