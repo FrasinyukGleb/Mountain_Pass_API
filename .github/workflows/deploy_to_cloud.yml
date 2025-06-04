@@ -39,6 +39,8 @@ jobs:
           FSTR_DB_NAME: ${{ secrets.FSTR_DB_NAME }}
           FSTR_DB_LOGIN: ${{ secrets.FSTR_DB_LOGIN }}
           FSTR_DB_PASS: ${{ secrets.FSTR_DB_PASS }}
+          APP_PORT: ${{ secrets.APP_PORT }}
+          APP_HOST: ${{ secrets.APP_HOST }}
         run: |
           pytest
 #  build_image_to_yc:
