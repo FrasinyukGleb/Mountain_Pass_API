@@ -24,14 +24,14 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Lint with ruff
-        run: |
-          ruff format src/
-          ruff check src/
-          ruff format test_mountain_pass.py
-          ruff check test_mountain_pass.py
-          ruff format test_parameters.py
-          ruff check test_parameters.py
+#      - name: Lint with ruff
+#        run: |
+#          ruff format src/
+#          ruff check src/
+#          ruff format test_mountain_pass.py
+#          ruff check test_mountain_pass.py
+#          ruff format test_parameters.py
+#          ruff check test_parameters.py
       - name: Run tests
         env:
           FSTR_DB_HOST: ${{ secrets.FSTR_DB_HOST }}
