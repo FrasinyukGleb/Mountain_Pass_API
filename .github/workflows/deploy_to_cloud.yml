@@ -7,6 +7,8 @@ on:
     pull_request:
       - 'main'
 
+  workflow_dispatch:
+
 jobs:
   run_tests:
     runs-on: ubuntu-latest
@@ -43,30 +45,30 @@ jobs:
           APP_HOST: ${{ secrets.APP_HOST }}
         run: |
           pytest
-#  build_image_to_yc:
-#    needs: run_tests
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#
-#      - name: Login Yandex Cloud
-#        uses: yc-actions/yc-cr-login@v2
-#        with:
-#          yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
-#
-#      - name: Build and push image to Yandex Cloud Container Registry
-#        run: |
-#          docker build \
-#          -t cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/${{ secrets.YANDEX_REPO_NAME }}:${{ github.sha }} \
-#          --build-arg FSTR_DB_HOST=${{ secrets.FSTR_DB_HOST }} \
-#          --build-arg FSTR_DB_PORT=${{ secrets.FSTR_DB_PORT }} \
-#          --build-arg FSTR_DB_NAME=${{ secrets.FSTR_DB_NAME }} \
-#          --build-arg FSTR_DB_PASS=${{ secrets.FSTR_DB_PASS }} \
-#          --build-arg FSTR_DB_LOGIN=${{ secrets.FSTR_DB_LOGIN }} \
-#          --no-cache .
-#          docker push cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/${{ secrets.YANDEX_REPO_NAME }}:${{ github.sha }}
-#
+  build_image_to_yc:
+    needs: run_tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login Yandex Cloud
+        uses: yc-actions/yc-cr-login@v2
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+
+      - name: Build and push image to Yandex Cloud Container Registry
+        run: |
+          docker build \
+          -t cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/${{ secrets.YANDEX_REPO_NAME }}:${{ github.sha }} \
+          --build-arg FSTR_DB_HOST=${{ secrets.FSTR_DB_HOST }} \
+          --build-arg FSTR_DB_PORT=${{ secrets.FSTR_DB_PORT }} \
+          --build-arg FSTR_DB_NAME=${{ secrets.FSTR_DB_NAME }} \
+          --build-arg FSTR_DB_PASS=${{ secrets.FSTR_DB_PASS }} \
+          --build-arg FSTR_DB_LOGIN=${{ secrets.FSTR_DB_LOGIN }} \
+          --no-cache .
+          docker push cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/${{ secrets.YANDEX_REPO_NAME }}:${{ github.sha }}
+
 #  deploy_image_to_yc:
 #    needs: build_image_to_yc
 #    runs-on: ubuntu-latest
