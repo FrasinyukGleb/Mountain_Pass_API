@@ -18,9 +18,9 @@
 
 
 ## Конфигурация workflows для Github Actions состоит из трех этапов:
-    - **run_tests** - запуск автотестов
-    - **build_image_to_yc** - сборка образа rest api
-    - **deploy_image_to_yc** - деплой образа на виртуальную машину (VM) Yandex Cloud
+    run_tests - запуск автотестов
+    build_image_to_yc - сборка образа rest api
+    deploy_image_to_yc - деплой образа на виртуальную машину (VM) Yandex Cloud
 
 
 ## Что было сделано для автоматического деплоя проекта:
