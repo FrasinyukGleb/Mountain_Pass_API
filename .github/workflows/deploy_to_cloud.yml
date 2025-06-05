@@ -69,20 +69,20 @@ jobs:
           --no-cache .
           docker push cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/${{ secrets.YANDEX_REPO_NAME }}:${{ github.sha }}
 
-#  deploy_image_to_yc:
-#    needs: build_image_to_yc
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Connect to VM on SSH and Rum commands to VM
-#        uses: appleboy/ssh-action@master
-#        with:
-#          host: ${{ secrets.VM_HOST }}
-#          username: ${{ secrets.VM_USERNAME }}
-#          key: ${{ secrets.YANDEX_SSH_PRIVATE_KEY }}
-#          passphrase: ${{ secrets.YANDEX_SSH_PASSPHRASE }}
-#          port: ${{ secrets.VM_PORT }}
-#          script: |
-#            sudo docker login --username oauth --password ${{ secrets.OAUTH_DOCKER_PASS }} cr.yandex
-#            sudo docker pull cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/${{ secrets.YANDEX_REPO_NAME }}:${{ github.sha }}
-#            sudo docker rm -f pereval
-#            sudo docker run -d -p 8080:8080 --name pereval cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/${{ secrets.YANDEX_REPO_NAME }}:${{ github.sha }}
+  deploy_image_to_yc:
+    needs: build_image_to_yc
+    runs-on: ubuntu-latest
+    steps:
+      - name: Connect to VM on SSH and Rum commands to VM
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USERNAME }}
+          key: ${{ secrets.YANDEX_SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.YANDEX_SSH_PASSPHRASE }}
+          port: ${{ secrets.VM_PORT }}
+          script: |
+            sudo docker login --username oauth --password ${{ secrets.OAUTH_DOCKER_PASS }} cr.yandex
+            sudo docker pull cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/${{ secrets.YANDEX_REPO_NAME }}:${{ github.sha }}
+            sudo docker rm -f mountain_pass
+            sudo docker run -d -p 8000:8000 --name mountain_pass cr.yandex/${{ secrets.YANDEX_REGISTRY_ID }}/${{ secrets.YANDEX_REPO_NAME }}:${{ github.sha }}
