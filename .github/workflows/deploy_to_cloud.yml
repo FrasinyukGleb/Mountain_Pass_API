@@ -79,7 +79,7 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USERNAME }}
           key: ${{ secrets.YANDEX_SSH_PRIVATE_KEY }}
-#          passphrase: ${{ secrets.YANDEX_SSH_PASSPHRASE }}
+          passphrase: ${{ secrets.YANDEX_SSH_PASSPHRASE }}
           port: ${{ secrets.VM_PORT }}
           script: |
             sudo docker login --username oauth --password ${{ secrets.OAUTH_DOCKER_PASS }} cr.yandex
